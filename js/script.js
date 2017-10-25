@@ -33,20 +33,17 @@ blurer.addEventListener('change', changeBlur, false);
 //----change color----
 var color = 'black';
 var colors = ['white','black','yellow','red','green','brown','blue','pink','grey','purple','cyan','orange'];
-//----select color-button elements and convert them (HTMLlollection) into an array
-//var col = Array.prototype.slice.call(colorButtons);
-var c = 0;
+
 var col = document.getElementsByClassName('color');
-var colorChange = function (c) {
-    color = colors[c];
+for(var i=0; i<colors.length; i++){
+    col[i].addEventListener("click", change(i), false)
 }
-window.addEventListener("mousedown", function (e) {
-    for (var i = 0; i < col.length; i++) {
-        col[i].addEventListener('resize', function (e){colorChange(i)}, false);
-    }
-}, false)
+function change(i) { return function(){ color = colors[i]; };}
 
-
+// ----clear canvas----
+var clearCanvas = document.getElementById('clearCanvas');
+var clear = function(){ ctx.clearRect(0,0,VAR.W,VAR.H); };
+clearCanvas.addEventListener('click', clear, false);
 
 var init = function () {
     canvas = document.createElement('canvas');
@@ -87,13 +84,13 @@ function findxy(res, e) {
         prevY = currY;
         currX = e.clientX;
         currY = e.clientY;
-
+        
         flag = true;
         dot_flag = true;
         if (dot_flag) {
             ctx.beginPath();
-            // ctx.fillStyle = 'black';
-            // ctx.shadowBlur = '5';
+            ctx.fillStyle = color;
+            // ctx.shadowBlur = blurSize;
             ctx.arc(currX, currY, lineSize/2, 0 * (Math.PI / 180), 360 * (Math.PI / 180));
             ctx.fill();
             ctx.closePath();
