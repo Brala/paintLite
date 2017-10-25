@@ -1,0 +1,45 @@
+@import "settings";
+
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.menu {
+    position: absolute;
+    background-color: $color-menu-bg;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100px;
+    padding: 5px;
+    min-width: 60px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: rgba(154, 255, 230, 0.3);
+}}
+
+ul{
+    width: 100px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 10px;
+}
+.btt2 li{
+    width: 23%;
+    margin: 4%;
+    height: 21px;
+    border-radius: 30%;
+    border: 1px $color-color-button-border solid;
+    
+    &:active{
+        border-color: $color-color-button-border-hover;
+    }
+}
+
