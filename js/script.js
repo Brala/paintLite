@@ -161,7 +161,6 @@ var layout = function (e) {
             fill();
         })
     }
-
 };
 var windowSize = document.getElementById('window-size');
 
@@ -169,42 +168,67 @@ var windowSize = document.getElementById('window-size');
 var mousePosition;
 var offset = [0, 0];
 var isDown = [false,false,false,false];
+var menus = document.getElementsByClassName('menu');
 
-//----------------- 1st & 2nd menu div ----
-var m1 = document.getElementsByClassName('menu');
-var m3 = document.getElementById('menu4');
-var m4 = document.getElementById('menu3');
-//----returns number of width and height of an element
-var m2Width = parseInt(window.getComputedStyle(m1[1]).width, 10);
-var m2Height = parseInt(window.getComputedStyle(m1[1]).height, 10);
-//----Initial position of element related to window 
-m1[0].style.top = '5%';
-m1[0].style.left = '5%';
-m1[1].style.top = (window.innerHeight/100)*95 - m2Height + 'px';
-m1[1].style.left = (window.innerWidth/100)*95 - m2Width +'px';
+//----returns number of width and height of an menu element
+var m2Width = parseInt(window.getComputedStyle(menus[1]).width, 10);
+var m2Height = parseInt(window.getComputedStyle(menus[1]).height, 10);
+var m3Width = parseInt(window.getComputedStyle(menus[2]).width, 10);
+var m4Height = parseInt(window.getComputedStyle(menus[3]).height, 10);
+//----Initial positions of menu elements related to window 
+menus[0].style.top = '5%';
+menus[0].style.left = '5%';
+menus[1].style.top = (window.innerHeight/100)*95 - m2Height + 'px';
+menus[1].style.left = (window.innerWidth/100)*95 - m2Width +'px';
+menus[2].style.top = '5%';
+menus[2].style.left = (window.innerWidth/100)*95 - m3Width + 'px';
+menus[3].style.top = (window.innerHeight/100)*95 - m4Height + 'px';
+menus[3].style.left = '5%';
 //----returns X and Y of coursor related to the element(top and left) + start moving
-m1[0].addEventListener('mousedown', function (e) {
-    isDown[0] = true;
-    offset = [
-        m1[0].offsetLeft - e.clientX,
-        m1[0].offsetTop - e.clientY
-    ];
-}, true);
-m1[1].addEventListener('mousedown', function (e) {
+for(i=0;i<menus.length;i++){
+    menus[i].addEventListener('mousedown', function (e) {
+        isDown[i] = true;
+        offset = [
+            menus[i].offsetLeft - e.clientX,
+            menus[i].offsetTop - e.clientY
+        ];
+    }, true);
+
+};
+
+menus[1].addEventListener('mousedown', function (e) {
     isDown[1] = true;
     offset2 = [
-        m1[1].offsetLeft - e.clientX,
-        m1[1].offsetTop - e.clientY
+        menus[1].offsetLeft - e.clientX,
+        menus[1].offsetTop - e.clientY
     ];
 }, true);
-
-
+menus[2].addEventListener('mousedown', function (e) {
+    isDown[2] = true;
+    offset3 = [
+        menus[2].offsetLeft - e.clientX,
+        menus[2].offsetTop - e.clientY
+    ];
+}, true);
+menus[3].addEventListener('mousedown', function (e) {
+    isDown[3] = true;
+    offset4 = [
+        menus[3].offsetLeft - e.clientX,
+        menus[3].offsetTop - e.clientY
+    ];
+}, true);
 //----stop moving
 document.addEventListener('mouseup', function () {
     isDown[0] = false;
 }, true);
 document.addEventListener('mouseup', function () {
     isDown[1] = false;
+}, true);
+document.addEventListener('mouseup', function () {
+    isDown[2] = false;
+}, true);
+document.addEventListener('mouseup', function () {
+    isDown[3] = false;
 }, true);
 //----mousemove-change position of div related to window
 document.addEventListener('mousemove', function (event) {
@@ -213,8 +237,8 @@ document.addEventListener('mousemove', function (event) {
             x: event.clientX,
             y: event.clientY
         };
-        m1[0].style.left = (mousePosition.x + offset[0]) + 'px';
-        m1[0].style.top = (mousePosition.y + offset[1]) + 'px';
+        menus[0].style.left = (mousePosition.x + offset[0]) + 'px';
+        menus[0].style.top = (mousePosition.y + offset[1]) + 'px';
     }
 }, true);
 document.addEventListener('mousemove', function (event) {
@@ -223,71 +247,27 @@ document.addEventListener('mousemove', function (event) {
             x: event.clientX,
             y: event.clientY
         };
-        m1[1].style.left = (mousePosition.x + offset2[0]) + 'px';
-        m1[1].style.top = (mousePosition.y + offset2[1]) + 'px';
+        menus[1].style.left = (mousePosition.x + offset2[0]) + 'px';
+        menus[1].style.top = (mousePosition.y + offset2[1]) + 'px';
     }
 }, true);
-
-//----------------- 3rd menu div ----
-
-var m3 = document.getElementById('menu3');
-//----returns number of width and height of an element
-var m3Width = parseInt(window.getComputedStyle(m3).width, 10);
-//----Initial position of element related to window 
-m3.style.top = '5%';
-m3.style.left = (window.innerWidth/100)*95 - m3Width + 'px';
-//----returns X and Y of coursor related to the element(top and left) + start moving
-m3.addEventListener('mousedown', function (e) {
-    isDown[2] = true;
-    offset3 = [
-        m3.offsetLeft - e.clientX,
-        m3.offsetTop - e.clientY
-    ];
-}, true);
-//----stop moving
-document.addEventListener('mouseup', function () {
-    isDown[2] = false;
-}, true);
-//----mousemove-change position of div related to window
 document.addEventListener('mousemove', function (event) {
     if (isDown[2]) {
         mousePosition = {
             x: event.clientX,
             y: event.clientY
         };
-        m3.style.left = (mousePosition.x + offset3[0]) + 'px';
-        m3.style.top = (mousePosition.y + offset3[1]) + 'px';
+        menus[2].style.left = (mousePosition.x + offset3[0]) + 'px';
+        menus[2].style.top = (mousePosition.y + offset3[1]) + 'px';
     }
 }, true);
-
-//----------------- 4th menu div ----
-
-var m4 = document.getElementById('menu4');
-//----returns number of width and height of an elements
-var m4Height = parseInt(window.getComputedStyle(m4).height, 10);
-//----Initial position of element related to window 
-m4.style.top = (window.innerHeight/100)*95 - m4Height + 'px';
-m4.style.left = '5%';
-//----returns X and Y of coursor related to the element(top and left) + start moving
-m4.addEventListener('mousedown', function (e) {
-    isDown[3] = true;
-    offset4 = [
-        m4.offsetLeft - e.clientX,
-        m4.offsetTop - e.clientY
-    ];
-}, true);
-//----stop moving
-document.addEventListener('mouseup', function () {
-    isDown[3] = false;
-}, true);
-//----mousemove-change position of div related to window
 document.addEventListener('mousemove', function (event) {
     if (isDown[3]) {
         mousePosition = {
             x: event.clientX,
             y: event.clientY
         };
-        m4.style.left = (mousePosition.x + offset4[0]) + 'px';
-        m4.style.top = (mousePosition.y + offset4[1]) + 'px';
+        menus[3].style.left = (mousePosition.x + offset4[0]) + 'px';
+        menus[3].style.top = (mousePosition.y + offset4[1]) + 'px';
     }
 }, true);
