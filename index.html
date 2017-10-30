@@ -12,7 +12,7 @@
 <body>
         <div class=" btt1 menu" id="menu1"><p>Tool, fill</p>
             <form action="">
-                Size
+                <label for="sizer">Size:</label>      
                 <select name="" id="sizer">
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -21,7 +21,7 @@
                     <option value="16">16</option>
                     <option value="32">32</option>
                 </select>
-                <label>Blur</label>
+                <label for="blurer">Blur:</label>
                 <select name="" id="blurer">
                     <option value="0" selected="select">0</option>
                     <option value="2">2</option>
@@ -50,7 +50,13 @@
             </ul>
         </div>
         <div class=" btt3 menu" id="menu3">Selections</div>
-        <div class=" btt4 menu" id="menu4">Options, Canvas, <br> save, image,</div>
+        <div class=" btt4 menu" id="menu4"><p>options,canvas, save,image</p>
+            <input type="button" id="window-size" value="window size">
+            <label for="width">Width:</label>
+            <input id="width" type="number" value="500" min="0" max="10000">
+            <label for="height">Height:</label>
+            <input id="height" type="number" value="300" min="0" max="10000">
+        </div>
     <script src="js/script.js"></script>
 </body>
 

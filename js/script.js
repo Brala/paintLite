@@ -2,55 +2,70 @@ window.onload = function () {
     init()
 };
 
-var canvas, ctx, flag = false,
+var flag = false,
     prevX = 0,
     currX = 0,
     prevY = 0,
     currY = 0,
-    dot_flag = false;
-    lineSize = 0;
+    dot_flag = false,
+    lineSize = 0,
     blurSize = 5;
 
 var VAR = {
-        W: 0,
-        H: 0,
-        rand: function (min, max) {
+    W: 0,
+    H: 0,
+    rand: function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    },
+    startSize: function(){}
 };
 
 //----change pen size----
 var sizer = document.getElementById('sizer');
 lineSize = document.getElementById('sizer').value;
-var changeSize = function(){lineSize = document.getElementById('sizer').value;}
-sizer.addEventListener('change',changeSize,false);
+var changeSize = function () {
+    lineSize = document.getElementById('sizer').value;
+}
+sizer.addEventListener('change', changeSize, false);
 
 //----change blur size----
 var blurer = document.getElementById('blurer');
 blurSize = document.getElementById('blurer').value;
-var changeBlur = function(){blurSize = document.getElementById('blurer').value;};
+var changeBlur = function () {
+    blurSize = document.getElementById('blurer').value;
+};
 blurer.addEventListener('change', changeBlur, false);
 //----change color----
 var color = 'black';
-var colors = ['white','black','yellow','red','green','brown','blue','pink','grey','purple','cyan','orange'];
+var colors = ['white', 'black', 'yellow', 'red', 'green', 'brown', 'blue', 'pink', 'grey', 'purple', 'cyan', 'orange'];
 
 var col = document.getElementsByClassName('color');
-for(var i=0; i<colors.length; i++){
+for (var i = 0; i < colors.length; i++) {
     col[i].addEventListener("click", change(i), false)
 }
-function change(i) { return function(){ color = colors[i]; };}
+
+function change(i) {
+    return function () {
+        color = colors[i];
+    };
+}
 
 // ----clear canvas----
 var clearCanvas = document.getElementById('clearCanvas');
-var clear = function(){ ctx.clearRect(0,0,VAR.W,VAR.H); };
-clearCanvas.addEventListener('click', clear, false);
+var fill = function() {
+    ctx.fillStyle = 'rgb(255,255,255)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+};
+clearCanvas.addEventListener('click', fill, false);
+
 
 var init = function () {
     canvas = document.createElement('canvas');
     ctx = canvas.getContext('2d');
+    window.addEventListener('resize',layout,false);
     layout();
-    window.addEventListener('resize', layout, false);
     document.body.appendChild(canvas);
+    VAR.startSize();
     canvas.addEventListener("mousemove", function (e) {
         findxy('move', e)
     }, false)
@@ -84,17 +99,17 @@ function findxy(res, e) {
         prevY = currY;
         currX = e.clientX;
         currY = e.clientY;
-        
+
         flag = true;
         dot_flag = true;
         if (dot_flag) {
             ctx.beginPath();
             ctx.fillStyle = color;
-            // ctx.shadowBlur = blurSize;
-            ctx.arc(currX, currY, lineSize/2, 0 * (Math.PI / 180), 360 * (Math.PI / 180));
+            ctx.shadowBlur = blurSize;
+            ctx.shadowColor = color;
+            ctx.arc(currX, currY, lineSize / 2, 0 * (Math.PI / 180), 360 * (Math.PI / 180));
             ctx.fill();
             ctx.closePath();
-            dot_flag = false;
         }
     }
     if (res == 'up' || res == 'out') {
@@ -110,152 +125,169 @@ function findxy(res, e) {
         }
     }
 }
-
+//--------
 var layout = function (e) {
     VAR.W = window.innerWidth;
     VAR.H = window.innerHeight;
-    VAR.d = Math.min(VAR.W, VAR.H);
-    canvas.width = VAR.W;
-    canvas.height = VAR.H;
+    var setWidth = document.getElementById('width');
+    var setHeight = document.getElementById('height');
+
+    // ----change canvas size with <input> values----
+    
+    fillCanvas();
+    // ----fill canvas bg-color----
+    function fillCanvas() {
+        fill();
+
+        VAR.startSize = function(){
+            canvas.width = setWidth.value;
+            canvas.height = setHeight.value;
+            setWidth.addEventListener('change', function () {
+                canvas.width = setWidth.value;
+                fill();
+            }, false);
+            setHeight.addEventListener('change', function () {
+                canvas.height = setHeight.value;
+                fill();
+            }, false);
+            fill();
+        } 
+
+        windowSize.addEventListener('click', function () {
+            canvas.width = VAR.W;
+            canvas.height = VAR.H;
+            setWidth.value = VAR.W;
+            setHeight.value = VAR.H;
+            fill();
+        })
+    }
+
 };
+var windowSize = document.getElementById('window-size');
 
 //----Mouse MOVING menu divs----
 var mousePosition;
 var offset = [0, 0];
-var isDown1, isDown2, isDown3, isDown4 = false;
-//var menus = ['menu1','menu2','menu3','menu4'];
-//for(i=0,i>menus.length,i++){}
+var isDown = [false,false,false,false];
 
-
-//----------------- 1st menu div ----
-
-var m1 = document.getElementById('menu1');
-m1.style.top = '5%';
-m1.style.left = '5%';
-m1.addEventListener('mousedown', function (e) {
-    isDown1 = true;
-    offset = [
-        m1.offsetLeft - e.clientX,
-        m1.offsetTop - e.clientY
-    ];
-}, true);
-
-document.addEventListener('mouseup', function () {
-    isDown1 = false;
-}, true);
-
-document.addEventListener('mousemove', function (event) {
-    event.preventDefault();
-    if (isDown1) {
-        mousePosition = {
-            x: event.clientX,
-            y: event.clientY
-        };
-        m1.style.left = (mousePosition.x + offset[0]) + 'px';
-        m1.style.top = (mousePosition.y + offset[1]) + 'px';
-    }
-}, true);
-
-//----------------- 2nd menu div ----
-
-var m2 = document.getElementById('menu2');
-//----Initial position of element related to window 
-m2.style.bottom = '5%';
-m2.style.right = '5%';
+//----------------- 1st & 2nd menu div ----
+var m1 = document.getElementsByClassName('menu');
+var m3 = document.getElementById('menu4');
+var m4 = document.getElementById('menu3');
 //----returns number of width and height of an element
-var m2Width = parseInt(window.getComputedStyle(m2).width, 10);
-var m2Height = parseInt(window.getComputedStyle(m2).height, 10);
+var m2Width = parseInt(window.getComputedStyle(m1[1]).width, 10);
+var m2Height = parseInt(window.getComputedStyle(m1[1]).height, 10);
+//----Initial position of element related to window 
+m1[0].style.top = '5%';
+m1[0].style.left = '5%';
+m1[1].style.top = (window.innerHeight/100)*95 - m2Height + 'px';
+m1[1].style.left = (window.innerWidth/100)*95 - m2Width +'px';
 //----returns X and Y of coursor related to the element(top and left) + start moving
-m2.addEventListener('mousedown', function (e) {
-    isDown2 = true;
-    offset2 = [
-        m2Width + (m2.offsetLeft - e.clientX),
-        m2Height + (m2.offsetTop - e.clientY)
+m1[0].addEventListener('mousedown', function (e) {
+    isDown[0] = true;
+    offset = [
+        m1[0].offsetLeft - e.clientX,
+        m1[0].offsetTop - e.clientY
     ];
 }, true);
+m1[1].addEventListener('mousedown', function (e) {
+    isDown[1] = true;
+    offset2 = [
+        m1[1].offsetLeft - e.clientX,
+        m1[1].offsetTop - e.clientY
+    ];
+}, true);
+
+
 //----stop moving
 document.addEventListener('mouseup', function () {
-    isDown2 = false;
+    isDown[0] = false;
+}, true);
+document.addEventListener('mouseup', function () {
+    isDown[1] = false;
 }, true);
 //----mousemove-change position of div related to window
 document.addEventListener('mousemove', function (event) {
-    event.preventDefault();
-    if (isDown2) {
+    if (isDown[0]) {
         mousePosition = {
             x: event.clientX,
             y: event.clientY
         };
-        m2.style.right = ((VAR.W - mousePosition.x) - offset2[0]) + 'px';
-        m2.style.bottom = ((VAR.H - mousePosition.y) - offset2[1]) + 'px';
+        m1[0].style.left = (mousePosition.x + offset[0]) + 'px';
+        m1[0].style.top = (mousePosition.y + offset[1]) + 'px';
+    }
+}, true);
+document.addEventListener('mousemove', function (event) {
+    if (isDown[1]) {
+        mousePosition = {
+            x: event.clientX,
+            y: event.clientY
+        };
+        m1[1].style.left = (mousePosition.x + offset2[0]) + 'px';
+        m1[1].style.top = (mousePosition.y + offset2[1]) + 'px';
     }
 }, true);
 
 //----------------- 3rd menu div ----
 
 var m3 = document.getElementById('menu3');
-//----Initial position of element related to window 
-m3.style.top = '5%';
-m3.style.right = '5%';
 //----returns number of width and height of an element
 var m3Width = parseInt(window.getComputedStyle(m3).width, 10);
-var m3Height = parseInt(window.getComputedStyle(m3).height, 10);
+//----Initial position of element related to window 
+m3.style.top = '5%';
+m3.style.left = (window.innerWidth/100)*95 - m3Width + 'px';
 //----returns X and Y of coursor related to the element(top and left) + start moving
 m3.addEventListener('mousedown', function (e) {
-    isDown3 = true;
+    isDown[2] = true;
     offset3 = [
-        m3Width + (m3.offsetLeft - e.clientX),
-        m3Height + (m3.offsetTop - e.clientY)
+        m3.offsetLeft - e.clientX,
+        m3.offsetTop - e.clientY
     ];
 }, true);
 //----stop moving
 document.addEventListener('mouseup', function () {
-    isDown3 = false;
+    isDown[2] = false;
 }, true);
 //----mousemove-change position of div related to window
 document.addEventListener('mousemove', function (event) {
-    event.preventDefault();
-    if (isDown3) {
+    if (isDown[2]) {
         mousePosition = {
             x: event.clientX,
             y: event.clientY
         };
-        m3.style.top = 'auto';
-        m3.style.right = ((VAR.W - mousePosition.x) - offset3[0]) + 'px';
-        m3.style.bottom = ((VAR.H - mousePosition.y) - offset3[1]) + 'px';
+        m3.style.left = (mousePosition.x + offset3[0]) + 'px';
+        m3.style.top = (mousePosition.y + offset3[1]) + 'px';
     }
 }, true);
 
 //----------------- 4th menu div ----
 
 var m4 = document.getElementById('menu4');
-//----Initial position of element related to window 
-m4.style.bottom = '5%';
-m4.style.left = '5%';
-//----returns number of width and height of an element
-var m4Width = parseInt(window.getComputedStyle(m4).width, 10);
+//----returns number of width and height of an elements
 var m4Height = parseInt(window.getComputedStyle(m4).height, 10);
+//----Initial position of element related to window 
+m4.style.top = (window.innerHeight/100)*95 - m4Height + 'px';
+m4.style.left = '5%';
 //----returns X and Y of coursor related to the element(top and left) + start moving
 m4.addEventListener('mousedown', function (e) {
-    isDown4 = true;
+    isDown[3] = true;
     offset4 = [
-        m4Width + (m4.offsetLeft - e.clientX),
-        m4Height + (m4.offsetTop - e.clientY)
+        m4.offsetLeft - e.clientX,
+        m4.offsetTop - e.clientY
     ];
 }, true);
 //----stop moving
 document.addEventListener('mouseup', function () {
-    isDown4 = false;
+    isDown[3] = false;
 }, true);
 //----mousemove-change position of div related to window
 document.addEventListener('mousemove', function (event) {
-    event.preventDefault();
-    if (isDown4) {
+    if (isDown[3]) {
         mousePosition = {
             x: event.clientX,
             y: event.clientY
         };
-        m4.style.left = 'auto';
-        m4.style.right = ((VAR.W - mousePosition.x) - offset4[0]) + 'px';
-        m4.style.bottom = ((VAR.H - mousePosition.y) - offset4[1]) + 'px';
+        m4.style.left = (mousePosition.x + offset4[0]) + 'px';
+        m4.style.top = (mousePosition.y + offset4[1]) + 'px';
     }
 }, true);
